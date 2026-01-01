@@ -14,14 +14,15 @@ public class FreeboardDTO {
     private String freeboardNotify;       // 공지 여부 (common/notification)
     private String freeboardDeleted;      // 삭제 여부 (maintained/deleted)
     private long userUid;                 // 작성자 ID (FK)
-    
+
     // 추가 필드 (DTO에서만 사용) - 작성자 이름, 댓글 수 등 추가 가능
     private String userName;              // 작성자 이름
     private int commentCount;             // 댓글 수
-    
+
     // 기본 생성자
-    public FreeboardDTO() {}
-    
+    public FreeboardDTO() {
+    }
+
     // 게시글 작성용 생성자
     public FreeboardDTO(String freeboardTitle, String freeboardContents, String freeboardAuthorIp, long userUid) {
         this.freeboardTitle = freeboardTitle;

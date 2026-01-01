@@ -22,7 +22,7 @@ import presentation.controller.page.Controller;
 public class UserLogoutController extends HttpServlet implements Controller {
     private static final long serialVersionUID = 1L;
     private final Gson gson = new Gson();
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,16 +31,16 @@ public class UserLogoutController extends HttpServlet implements Controller {
         if (session != null) {
             session.invalidate();
         }
-        
+
         // JSON 응답인지 확인
         boolean isJsonRequest = request.getRequestURI().endsWith(".do");
-        
+
         if (isJsonRequest) {
             // JSON 응답 전송
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);
             result.put("message", "로그아웃 되었습니다.");
-            
+
             response.setContentType("application/json;charset=UTF-8");
             PrintWriter out = response.getWriter();
             out.print(gson.toJson(result));
@@ -50,7 +50,7 @@ public class UserLogoutController extends HttpServlet implements Controller {
             response.sendRedirect(request.getContextPath() + "/index.html");
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

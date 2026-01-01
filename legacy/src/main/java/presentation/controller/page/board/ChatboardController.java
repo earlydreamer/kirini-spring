@@ -33,22 +33,22 @@ public class ChatboardController extends HttpServlet implements Controller {
     private static final long serialVersionUID = 1L;
     private ChatboardService chatboardService;
     private util.web.RequestRouter router;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
         this.chatboardService = new ChatboardService();
-        
+
         // 라우터 설정
         initRequestRouter();
     }
-    
+
     /**
      * 요청 라우터 초기화
      */
     private void initRequestRouter() {
         router = new util.web.RequestRouter();
-        
+
         // GET 요청 JSON 라우터 설정
         router.getJson("/", (req, res) -> {
             Map<String, Object> result = new HashMap<>();
@@ -56,20 +56,20 @@ public class ChatboardController extends HttpServlet implements Controller {
             result.put("message", "채팅게시판 API");
             return result;
         });
-        
+
         router.getJson("/list", (req, res) -> {
             List<ChatboardDTO> chatList = chatboardService.getAllChats();
             Map<String, Object> result = new HashMap<>();
             result.put("chatList", chatList);
             return result;
         });
-        
+
         // POST 요청 JSON 라우터 설정
         router.postJson("/post", (req, res) -> {
             // 로그인 확인
             HttpSession session = req.getSession();
             UserDTO user = (UserDTO) session.getAttribute("user");
-            
+
             if (user == null) {
                 Map<String, Object> errorResult = new HashMap<>();
                 errorResult.put("success", false);
@@ -88,7 +88,7 @@ public class ChatboardController extends HttpServlet implements Controller {
                 errorResult.put("message", "요청 데이터를 읽는 중 오류가 발생했습니다: " + e.getMessage());
                 return errorResult;
             }
-            
+
             // JSON 파싱
             JsonObject jsonRequest = new Gson().fromJson(sb.toString(), JsonObject.class);
             String content = jsonRequest.has("content") ? jsonRequest.get("content").getAsString() : "";
@@ -107,13 +107,13 @@ public class ChatboardController extends HttpServlet implements Controller {
             chat.setChatboardTitle(content);  // content를 title 필드에 저장
             chat.setChatboardAuthorIp(clientIp);
             chat.setUserUid(user.getUserUid());
-            
+
             // 채팅 등록
             boolean result = chatboardService.postChat(chat);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", result);
-            
+
             if (result) {
                 String nickname = generateConsistentNickname(user.getUserUid());
                 response.put("message", "게시글이 등록되었습니다.");
@@ -122,11 +122,11 @@ public class ChatboardController extends HttpServlet implements Controller {
             } else {
                 response.put("message", "게시글 등록에 실패했습니다.");
             }
-            
+
             return response;
         });
     }
-    
+
     /**
      * JSON 응답 전송
      */
@@ -136,12 +136,12 @@ public class ChatboardController extends HttpServlet implements Controller {
         out.print(new Gson().toJson(data));
         out.flush();
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // API 요청인지 먼저 확인 (pathInfo 있는 요청은 API 요청으로 간주)
         String pathInfo = request.getPathInfo();
-        
+
         // pathInfo가 있으면 API 요청으로 간주하고 Router를 통해 처리 시도
         if (pathInfo != null) {
             boolean handled = router.handleGetJson(request, response);
@@ -150,7 +150,7 @@ public class ChatboardController extends HttpServlet implements Controller {
                 return;
             }
         }
-        
+
         // .do 요청일 경우 JSON 응답으로 처리
         String requestURI = request.getRequestURI();
         if (requestURI != null && requestURI.endsWith(".do")) {
@@ -161,9 +161,9 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, result);
             return;
         }
-        
+
         String action = request.getParameter("action");
-        
+
         if (action == null || action.equals("list")) {
             // 채팅 목록 조회
             getAllChats(request, response);
@@ -171,12 +171,12 @@ public class ChatboardController extends HttpServlet implements Controller {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // API 요청인지 먼저 확인 (pathInfo 있는 요청은 API 요청으로 간주)
         String pathInfo = request.getPathInfo();
-        
+
         // pathInfo가 있으면 API 요청으로 간주하고 Router를 통해 처리 시도
         if (pathInfo != null) {
             boolean handled = router.handlePostJson(request, response);
@@ -185,9 +185,9 @@ public class ChatboardController extends HttpServlet implements Controller {
                 return;
             }
         }
-        
+
         String action = request.getParameter("action");
-        
+
         if (action == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } else if (action.equals("post")) {
@@ -209,28 +209,29 @@ public class ChatboardController extends HttpServlet implements Controller {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
-    
+
     /**
      * 모든 채팅 메시지 조회
      */
     private void getAllChats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<ChatboardDTO> chatList = chatboardService.getAllChats();
-        
+
         // JSON 응답으로 채팅 데이터 반환
         Map<String, Object> result = new HashMap<>();
         result.put("success", true);
         result.put("chatList", chatList);
-        
+
         sendJsonResponse(response, result);
     }
-    
+
     /**
      * 채팅 메시지 등록
-     */    private void postChat(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+     */
+    private void postChat(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 로그인 확인
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null) {
             sendJsonResponse(response, false, "로그인이 필요합니다.");
             return;
@@ -250,22 +251,22 @@ public class ChatboardController extends HttpServlet implements Controller {
         JsonObject jsonRequest = new Gson().fromJson(sb.toString(), JsonObject.class);
         String content = jsonRequest.has("content") ? jsonRequest.get("content").getAsString() : "";
         String clientIp = IpUtil.getClientIpAddr(request);
-        
+
         if (content == null || content.trim().isEmpty()) {
             sendJsonResponse(response, false, "내용을 입력해주세요.");
             return;
         }
-        
+
         ChatboardDTO chat = new ChatboardDTO(content, clientIp, user.getUserUid());
-        
+
         boolean result = chatboardService.postChat(chat);
-        
+
         if (result) {
             // 사용자 ID를 기반으로 일관된 익명 닉네임 생성
             // 동일 사용자는 항상 같은 닉네임을 갖게 됨
             String anonymousNickname = generateConsistentNickname(user.getUserUid());
             chat.setAnonymousNickname(anonymousNickname);
-            
+
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -279,16 +280,16 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, false, "메시지 등록에 실패했습니다.");
         }
     }
-    
+
     /**
      * 사용자 ID를 기반으로 일관된 닉네임 생성
      */
     private String generateConsistentNickname(long userId) {
         // 사용자 ID를 시드로 사용하여 일관된 결과 생성
-        int hash = (int)((userId * 31) % 0xffffff);
+        int hash = (int) ((userId * 31) % 0xffffff);
         return "익명_" + Integer.toHexString(hash);
     }
-    
+
     /**
      * 채팅 메시지 수정
      */
@@ -296,27 +297,27 @@ public class ChatboardController extends HttpServlet implements Controller {
         // 로그인 확인
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null) {
             sendJsonResponse(response, false, "로그인이 필요합니다.");
             return;
         }
-        
+
         try {
             long chatId = Long.parseLong(request.getParameter("id"));
             String content = request.getParameter("content");
-            
+
             if (content == null || content.trim().isEmpty()) {
                 sendJsonResponse(response, false, "내용을 입력해주세요.");
                 return;
             }
-            
+
             ChatboardDTO chat = new ChatboardDTO();
             chat.setChatboardUid(chatId);
             chat.setChatboardTitle(content);
-            
+
             boolean result = chatboardService.updateChatById(chat, user.getUserUid(), user.getUserAuthority());
-            
+
             if (result) {
                 sendJsonResponse(response, true, "메시지가 수정되었습니다.");
             } else {
@@ -326,7 +327,7 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, false, "잘못된 메시지 ID입니다.");
         }
     }
-    
+
     /**
      * 채팅 메시지 삭제
      */
@@ -334,16 +335,16 @@ public class ChatboardController extends HttpServlet implements Controller {
         // 로그인 확인
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null) {
             sendJsonResponse(response, false, "로그인이 필요합니다.");
             return;
         }
-        
+
         try {
             long chatId = Long.parseLong(request.getParameter("id"));
             boolean result = chatboardService.deleteChatById(chatId, user.getUserUid(), user.getUserAuthority());
-            
+
             if (result) {
                 sendJsonResponse(response, true, "메시지가 삭제되었습니다.");
             } else {
@@ -353,7 +354,7 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, false, "잘못된 메시지 ID입니다.");
         }
     }
-    
+
     /**
      * 불량 채팅 신고
      */
@@ -361,29 +362,29 @@ public class ChatboardController extends HttpServlet implements Controller {
         // 로그인 확인
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null) {
             sendJsonResponse(response, false, "로그인이 필요합니다.");
             return;
         }
-        
+
         try {
             long chatId = Long.parseLong(request.getParameter("id"));
             String reportReason = request.getParameter("reason");
             String reportCategory = request.getParameter("category");
-            
+
             if (reportReason == null || reportReason.trim().isEmpty()) {
                 sendJsonResponse(response, false, "신고 사유를 입력해주세요.");
                 return;
             }
-            
-            if (reportCategory == null || reportCategory.trim().isEmpty() || 
-                !isValidCategory(reportCategory)) {
+
+            if (reportCategory == null || reportCategory.trim().isEmpty() ||
+                    !isValidCategory(reportCategory)) {
                 reportCategory = "spam_ad"; // 기본값
             }
-            
+
             boolean result = chatboardService.reportChat(chatId, user.getUserUid(), reportReason, reportCategory);
-            
+
             if (result) {
                 sendJsonResponse(response, true, "신고가 접수되었습니다.");
             } else {
@@ -393,31 +394,31 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, false, "잘못된 메시지 ID입니다.");
         }
     }
-    
+
     /**
      * 불량 이용자 제재 (관리자 전용)
      */
-    private void updateUserPenaltyStatusByUserId(HttpServletRequest request, HttpServletResponse response) 
+    private void updateUserPenaltyStatusByUserId(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // 로그인 및 관리자 권한 확인
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
-        
+
         if (user == null || !("admin".equals(user.getUserAuthority()) || "armband".equals(user.getUserAuthority()))) {
             sendJsonResponse(response, false, "관리자 권한이 필요합니다.");
             return;
         }
-        
+
         try {
             long targetUserId = Long.parseLong(request.getParameter("userId"));
             String penaltyType = request.getParameter("penaltyType");
             String reason = request.getParameter("reason");
-            
+
             if (reason == null || reason.trim().isEmpty()) {
                 sendJsonResponse(response, false, "제재 사유를 입력해주세요.");
                 return;
             }
-            
+
             int duration = 7; // 기본 7일
             try {
                 if (request.getParameter("duration") != null) {
@@ -426,11 +427,11 @@ public class ChatboardController extends HttpServlet implements Controller {
             } catch (NumberFormatException e) {
                 // 기본값 사용
             }
-            
+
             boolean result = chatboardService.updateUserPenaltyStatus(
-                targetUserId, penaltyType, duration, reason, user.getUserUid(), user.getUserAuthority()
+                    targetUserId, penaltyType, duration, reason, user.getUserUid(), user.getUserAuthority()
             );
-            
+
             if (result) {
                 sendJsonResponse(response, true, "이용자 제재가 처리되었습니다.");
             } else {
@@ -440,24 +441,24 @@ public class ChatboardController extends HttpServlet implements Controller {
             sendJsonResponse(response, false, "잘못된 사용자 ID입니다.");
         }
     }
-    
+
     /**
      * JSON 응답 헬퍼 메서드
      */
-    private void sendJsonResponse(HttpServletResponse response, boolean success, String message) 
+    private void sendJsonResponse(HttpServletResponse response, boolean success, String message)
             throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         // GSON 라이브러리 사용
         JsonObject jsonResponse = new JsonObject();
         jsonResponse.addProperty("success", success);
         jsonResponse.addProperty("message", message);
-        
+
         Gson gson = new Gson();
         response.getWriter().write(gson.toJson(jsonResponse));
     }
-    
+
     /**
      * JSON 문자열 이스케이프
      */
@@ -466,20 +467,20 @@ public class ChatboardController extends HttpServlet implements Controller {
             return "";
         }
         return input.replace("\\", "\\\\")
-                   .replace("\"", "\\\"")
-                   .replace("\n", "\\n")
-                   .replace("\r", "\\r")
-                   .replace("\t", "\\t");
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
-    
+
     /**
      * 신고 카테고리 유효성 검사
      */
     private boolean isValidCategory(String category) {
-        return category.equals("spam_ad") || 
-               category.equals("profanity_hate_speech") ||
-               category.equals("adult_content") ||
-               category.equals("impersonation_fraud") ||
-               category.equals("copyright_infringement");
+        return category.equals("spam_ad") ||
+                category.equals("profanity_hate_speech") ||
+                category.equals("adult_content") ||
+                category.equals("impersonation_fraud") ||
+                category.equals("copyright_infringement");
     }
 }

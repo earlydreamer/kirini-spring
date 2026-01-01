@@ -10,13 +10,14 @@ public class ChatboardDTO {
     private String chatboardAuthorIp;  // IP 주소
     private String chatboardDeleted;   // 삭제 여부
     private long userUid;              // 작성자 ID (비노출)
-    
+
     // 추가 필드 - 익명 닉네임 생성용
     private String anonymousNickname;  // 랜덤 생성 익명 닉네임
-    
+
     // 기본 생성자
-    public ChatboardDTO() {}
-    
+    public ChatboardDTO() {
+    }
+
     // 게시글 작성용 생성자
     public ChatboardDTO(String chatboardTitle, String chatboardAuthorIp, long userUid) {
         this.chatboardTitle = chatboardTitle;
@@ -24,7 +25,7 @@ public class ChatboardDTO {
         this.userUid = userUid;
         this.chatboardDeleted = "maintained";
     }
-    
+
     // getter와 setter 메서드들
     public long getChatboardUid() {
         return chatboardUid;

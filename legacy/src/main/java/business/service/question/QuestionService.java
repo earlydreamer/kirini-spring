@@ -11,11 +11,11 @@ import repository.dao.board.QuestionDAO;
 
 public class QuestionService {
     private final QuestionDAO questionDAO;
-    
+
     public QuestionService() {
         this.questionDAO = new QuestionDAO();
     }
-    
+
     /**
      * 질문 ID로 질문 정보 조회
      */
@@ -27,7 +27,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 질문 생성
      */
@@ -39,7 +39,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 질문 수정
      */
@@ -51,7 +51,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 질문 삭제
      */
@@ -63,7 +63,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 조회수 증가
      */
@@ -75,7 +75,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 모든 질문 목록 조회 (페이징)
      */
@@ -87,7 +87,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 전체 질문 수 조회
      */
@@ -99,7 +99,7 @@ public class QuestionService {
             return 0;
         }
     }
-    
+
     /**
      * 특정 사용자의 질문 목록 조회 (페이징)
      */
@@ -111,7 +111,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 특정 사용자의 전체 질문 수 조회
      */
@@ -123,7 +123,7 @@ public class QuestionService {
             return 0;
         }
     }
-    
+
     /**
      * 질문에 대한 답변 목록 조회
      */
@@ -135,7 +135,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 답변 ID로 답변 정보 조회
      */
@@ -147,7 +147,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 답변 생성
      */
@@ -159,7 +159,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 답변 수정
      */
@@ -171,7 +171,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 답변 삭제
      */
@@ -183,7 +183,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 첨부파일 추가
      */
@@ -195,7 +195,7 @@ public class QuestionService {
             return false;
         }
     }
-    
+
     /**
      * 질문에 대한 첨부파일 목록 조회
      */
@@ -207,7 +207,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 첨부파일 ID로 첨부파일 정보 조회
      */
@@ -219,7 +219,7 @@ public class QuestionService {
             return null;
         }
     }
-    
+
     /**
      * 사용자 ID로 사용자 정보 조회
      */

@@ -128,7 +128,9 @@ public class AdminPageController extends HttpServlet implements Controller {
         PrintWriter out = response.getWriter();
         out.print(gson.toJson(data));
         out.flush();
-    }    /**
+    }
+
+    /**
      * GET 요청 처리
      */
     @Override
@@ -264,7 +266,9 @@ public class AdminPageController extends HttpServlet implements Controller {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sendJsonResponse(response, errorResponse);
         }
-    }    /**
+    }
+
+    /**
      * POST 요청 처리
      */
     @Override
@@ -645,7 +649,7 @@ public class AdminPageController extends HttpServlet implements Controller {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         calendar.setTime(today);
 
-        switch(duration) {
+        switch (duration) {
             case "1일":
                 calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
                 break;

@@ -15,13 +15,14 @@ public class FreeboardCommentDTO {
     private String freeboardCommentAuthorIp;    // 작성자 IP
     private long freeboardUid;                  // 게시글 ID (FK)
     private long userUid;                       // 작성자 ID (FK)
-    
+
     // 추가 필드 (조인 등으로 가져올 데이터)
     private String userName;                    // 작성자 이름
-    
+
     // 기본 생성자
-    public FreeboardCommentDTO() {}
-    
+    public FreeboardCommentDTO() {
+    }
+
     // 댓글 작성용 생성자
     public FreeboardCommentDTO(long freeboardUid, long userUid, String contents, String authorIp) {
         this.freeboardUid = freeboardUid;
@@ -30,7 +31,7 @@ public class FreeboardCommentDTO {
         this.freeboardCommentAuthorIp = authorIp;
         this.freeboardCommentWritetime = LocalDateTime.now();
     }
-    
+
     // Getter 및 Setter 메서드
     public long getFreeboardCommentUid() {
         return freeboardCommentUid;
@@ -95,12 +96,12 @@ public class FreeboardCommentDTO {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    
+
     @Override
     public String toString() {
-        return "FreeboardCommentDTO [freeboardCommentUid=" + freeboardCommentUid + 
-                ", freeboardUid=" + freeboardUid + 
-                ", userUid=" + userUid + 
+        return "FreeboardCommentDTO [freeboardCommentUid=" + freeboardCommentUid +
+                ", freeboardUid=" + freeboardUid +
+                ", userUid=" + userUid +
                 ", freeboardCommentWritetime=" + freeboardCommentWritetime + "]";
     }
 }

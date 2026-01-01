@@ -14,11 +14,11 @@ import repository.dao.database.KeyboardInfoDAO;
  */
 public class KeyboardInfoService {
     private final KeyboardInfoDAO keyboardInfoDAO;
-    
+
     public KeyboardInfoService() {
         this.keyboardInfoDAO = new KeyboardInfoDAO();
     }
-    
+
     /**
      * 모든 키보드 정보 조회
      */
@@ -30,7 +30,8 @@ public class KeyboardInfoService {
             return null;
         }
     }
-      /**
+
+    /**
      * 키보드 상세 정보 조회
      */
     public KeyboardInfoDTO getKeyboardInfoById(long keyboardId) {
@@ -41,19 +42,19 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 키보드 상세 정보 조회 (별칭 메서드 - UserpageController 호환용)
      */
     public KeyboardInfoDTO getKeyboardById(long keyboardId) {
         return getKeyboardInfoById(keyboardId);
     }
-    
+
     /**
      * 조건별 키보드 검색
      */
-    public List<KeyboardInfoDTO> searchKeyboardInfosByCondition(String keyword, String manufacturer, 
-            String switchType, String layoutType, String connectType, int page, int pageSize) {
+    public List<KeyboardInfoDTO> searchKeyboardInfosByCondition(String keyword, String manufacturer,
+                                                                String switchType, String layoutType, String connectType, int page, int pageSize) {
         try {
             return keyboardInfoDAO.searchKeyboardInfosByCondition(
                     keyword, manufacturer, switchType, layoutType, connectType, page, pageSize);
@@ -62,7 +63,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 키보드 한줄평 추가
      */
@@ -74,7 +75,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 키보드 한줄평 목록 조회
      */
@@ -86,7 +87,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 한줄평 삭제 (관리자)
      */
@@ -99,7 +100,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 한줄평 삭제 (사용자 본인)
      */
@@ -111,7 +112,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 키보드 스크랩 (즐겨찾기)
      */
@@ -123,7 +124,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 이미 스크랩했는지 확인
      */
@@ -135,7 +136,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 사용자가 스크랩한 키보드 목록 조회
      */
@@ -147,7 +148,7 @@ public class KeyboardInfoService {
             return new ArrayList<>();
         }
     }
-    
+
     /**
      * 사용자가 스크랩한 키보드 총 개수 조회
      */
@@ -159,7 +160,7 @@ public class KeyboardInfoService {
             return 0;
         }
     }
-    
+
     /**
      * 키보드 태그 조회 (투표 정보 포함)
      */
@@ -171,7 +172,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 키보드 태그 투표
      */
@@ -183,7 +184,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 키보드 태그 제안 (새 태그 추가)
      */
@@ -195,7 +196,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 키보드 별점 추가
      */
@@ -207,7 +208,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 키보드 별점 수정
      */
@@ -219,7 +220,7 @@ public class KeyboardInfoService {
             return false;
         }
     }
-    
+
     /**
      * 사용자 별점 조회
      */
@@ -231,7 +232,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 사용자가 작성한 키보드 별점 목록 조회
      */
@@ -243,7 +244,7 @@ public class KeyboardInfoService {
             return new ArrayList<>();
         }
     }
-    
+
     /**
      * 사용자가 작성한 키보드 별점 총 개수 조회
      */
@@ -255,7 +256,7 @@ public class KeyboardInfoService {
             return 0;
         }
     }
-    
+
     /**
      * 총 키보드 수 조회 (페이징용)
      */
@@ -267,12 +268,12 @@ public class KeyboardInfoService {
             return 0;
         }
     }
-    
+
     /**
      * 검색 조건에 맞는 키보드 수 조회 (페이징용)
      */
-    public int getFilteredKeyboardCount(String keyword, String manufacturer, 
-            String switchType, String layoutType, String connectType) {
+    public int getFilteredKeyboardCount(String keyword, String manufacturer,
+                                        String switchType, String layoutType, String connectType) {
         try {
             return keyboardInfoDAO.getFilteredKeyboardCount(
                     keyword, manufacturer, switchType, layoutType, connectType);
@@ -281,7 +282,7 @@ public class KeyboardInfoService {
             return 0;
         }
     }
-    
+
     /**
      * 제조사 목록 조회
      */
@@ -293,7 +294,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 스위치 타입 목록 조회
      */
@@ -305,7 +306,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 레이아웃 타입 목록 조회
      */
@@ -317,7 +318,7 @@ public class KeyboardInfoService {
             return null;
         }
     }
-    
+
     /**
      * 연결 타입 목록 조회
      */

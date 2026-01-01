@@ -23,9 +23,9 @@ public class AdminUserPenaltyDTO {
     }
 
     // 모든 필드를 포함한 생성자
-    public AdminUserPenaltyDTO(long penaltyUid, String penaltyReason, Date penaltyStartDate, 
-                         Date penaltyEndDate, String penaltyStatus, String penaltyDuration, 
-                         long userUid, String username, long adminUid, String adminUsername) {
+    public AdminUserPenaltyDTO(long penaltyUid, String penaltyReason, Date penaltyStartDate,
+                               Date penaltyEndDate, String penaltyStatus, String penaltyDuration,
+                               long userUid, String username, long adminUid, String adminUsername) {
         this.penaltyUid = penaltyUid;
         this.penaltyReason = penaltyReason;
         this.penaltyStartDate = penaltyStartDate;
@@ -110,7 +110,7 @@ public class AdminUserPenaltyDTO {
     public void setAdminUid(long adminUid) {
         this.adminUid = adminUid;
     }
-    
+
     public String getAdminUsername() {
         return adminUsername;
     }

@@ -9,10 +9,10 @@ import java.util.logging.Logger;
  */
 public class TransactionHelper {
     private static final Logger logger = Logger.getLogger(TransactionHelper.class.getName());
-    
+
     /**
      * 트랜잭션 롤백을 안전하게 처리합니다.
-     * 
+     *
      * @param conn 롤백할 데이터베이스 연결 객체
      */
     public static void rollback(Connection conn) {
@@ -24,11 +24,11 @@ public class TransactionHelper {
             }
         }
     }
-    
+
     /**
      * 트랜잭션의 자동 커밋 모드를 안전하게 설정합니다.
-     * 
-     * @param conn 설정할 데이터베이스 연결 객체
+     *
+     * @param conn       설정할 데이터베이스 연결 객체
      * @param autoCommit 자동 커밋 여부
      */
     public static void setAutoCommit(Connection conn, boolean autoCommit) {
@@ -40,10 +40,10 @@ public class TransactionHelper {
             }
         }
     }
-    
+
     /**
      * 트랜잭션 작업을 안전하게 커밋합니다.
-     * 
+     *
      * @param conn 커밋할 데이터베이스 연결 객체
      * @return 커밋 성공 여부
      */

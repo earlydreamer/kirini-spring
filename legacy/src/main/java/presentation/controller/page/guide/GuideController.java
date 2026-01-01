@@ -22,7 +22,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import presentation.controller.page.Controller; 
+import presentation.controller.page.Controller;
 import util.web.RequestRouter;
 
 /**
@@ -85,7 +85,7 @@ public class GuideController extends HttpServlet implements Controller { // Cont
             String keyword = req.getParameter("keyword");
             if (keyword == null || keyword.trim().isEmpty()) {
                 // 키워드가 없으면 빈 리스트 반환
-                return new java.util.ArrayList<GuideDTO>(); 
+                return new java.util.ArrayList<GuideDTO>();
             }
             // 검색 결과 반환
             return guideService.searchGuidesByKeyword(keyword);
@@ -97,8 +97,8 @@ public class GuideController extends HttpServlet implements Controller { // Cont
                 Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", "guideId 파라미터가 필요합니다.");
                 // res.setStatus(HttpServletResponse.SC_BAD_REQUEST); // RequestRouter 콜백 내에서 직접 상태 코드 설정은 지양하는 것이 좋다냥.
-                                                                    // RequestRouter의 handle 메소드나 sendJsonResponse에서 처리하는 것을 고려해볼 수 있다냥.
-                return errorResponse; 
+                // RequestRouter의 handle 메소드나 sendJsonResponse에서 처리하는 것을 고려해볼 수 있다냥.
+                return errorResponse;
             }
             try {
                 long guideId = Long.parseLong(guideIdStr);
@@ -131,11 +131,11 @@ public class GuideController extends HttpServlet implements Controller { // Cont
         response.setContentType("application/json;charset=UTF-8");
         // 데이터 객체의 내용에 따라 상태 코드를 설정할 수 있다냥.
         // 예를 들어, data가 Map이고 "error" 키를 포함하면 400 또는 404를 설정할 수 있다냥.
-        if (data instanceof Map && ((Map<?,?>)data).containsKey("error")) {
-            if ("guideId 파라미터가 필요합니다.".equals(((Map<?,?>)data).get("error")) || "잘못된 guideId 형식입니다.".equals(((Map<?,?>)data).get("error"))) {
+        if (data instanceof Map && ((Map<?, ?>) data).containsKey("error")) {
+            if ("guideId 파라미터가 필요합니다.".equals(((Map<?, ?>) data).get("error")) || "잘못된 guideId 형식입니다.".equals(((Map<?, ?>) data).get("error"))) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-        } else if (data instanceof Map && ((Map<?,?>)data).containsKey("message") && "해당 ID의 용어를 찾을 수 없습니다.".equals(((Map<?,?>)data).get("message"))) {
+        } else if (data instanceof Map && ((Map<?, ?>) data).containsKey("message") && "해당 ID의 용어를 찾을 수 없습니다.".equals(((Map<?, ?>) data).get("message"))) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
         PrintWriter out = response.getWriter();
@@ -148,7 +148,7 @@ public class GuideController extends HttpServlet implements Controller { // Cont
         // RequestRouter의 handle 메소드를 사용하여 요청 처리
         // handle 메소드가 true를 반환하면 요청이 처리된 것이므로 추가 작업 필요 없음
         if (router.handle(request, response)) {
-            return; 
+            return;
         }
 
         // .do 요청에 대한 기존 로직
@@ -156,19 +156,19 @@ public class GuideController extends HttpServlet implements Controller { // Cont
         if (requestURI != null && requestURI.endsWith(".do")) {
             String action = request.getParameter("action");
             if ("search".equals(action)) {
-                searchGuidesByContent(request, response); 
+                searchGuidesByContent(request, response);
             } else if ("detail".equals(action)) {
-                getGuideDetail(request, response); 
+                getGuideDetail(request, response);
             } else {
                 // .do 요청이지만 action이 명시되지 않은 경우, 모든 가이드를 보여주도록 처리
                 getGuides(request, response);
             }
             return;
         }
-        
+
         // RequestRouter가 처리하지 못하고 .do 요청도 아닌 경우 (예: JSP 페이지 직접 요청 등)
         // 여기서는 기본적으로 모든 가이드를 보여주는 것으로 처리
-        getGuides(request, response); 
+        getGuides(request, response);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class GuideController extends HttpServlet implements Controller { // Cont
             return;
         }
         String action = request.getParameter("action");
-        if ("search".equals(action)) { 
+        if ("search".equals(action)) {
             searchGuidesByContent(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "POST method not supported for this URL");
@@ -202,7 +202,7 @@ public class GuideController extends HttpServlet implements Controller { // Cont
             searchResults = guideService.searchGuidesByKeyword(keyword);
         } else {
             // 키워드가 없으면 모든 가이드 반환 (또는 빈 리스트/에러 처리)
-            searchResults = guideService.getAllGuides(); 
+            searchResults = guideService.getAllGuides();
         }
         sendJsonResponse(response, searchResults);
     }
@@ -211,7 +211,7 @@ public class GuideController extends HttpServlet implements Controller { // Cont
      * ID로 특정 키보드 용어 상세 조회하고 JSON으로 응답 (RequestRouter에서 사용되거나 직접 호출될 수 있음)
      */
     private void getGuideDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String guideIdStr = request.getParameter("id"); 
+        String guideIdStr = request.getParameter("id");
         try {
             long guideId = Long.parseLong(guideIdStr);
             GuideDTO guide = guideService.getGuideById(guideId);
@@ -245,6 +245,6 @@ public class GuideController extends HttpServlet implements Controller { // Cont
         }
         // execute 메소드는 일반적으로 뷰 이름을 반환하지만,
         // 여기서는 응답을 직접 처리하므로 null을 반환하거나 다른 방식을 사용할 수 있다냥.
-        return null; 
+        return null;
     }
 }

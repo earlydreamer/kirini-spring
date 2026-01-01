@@ -17,22 +17,22 @@ public class AdminUserPenaltyDAO {
     private Connection conn;
     private PreparedStatement pstmt;
     private ResultSet rs;
-    
+
     /**
      * 모든 사용자 패널티 목록 조회
      */
     public List<AdminUserPenaltyDTO> getAllUserPenalty() throws SQLException {
         List<AdminUserPenaltyDTO> penaltyList = new ArrayList<>();
-        
+
         try {
             conn = DBConnectionUtil.getConnection();
             String sql = "SELECT p.*, u.user_name as username " +
-                         "FROM penalty p " +
-                         "JOIN user u ON p.user_uid = u.user_uid " +
-                         "ORDER BY p.penalty_start_date DESC";
+                    "FROM penalty p " +
+                    "JOIN user u ON p.user_uid = u.user_uid " +
+                    "ORDER BY p.penalty_start_date DESC";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 AdminUserPenaltyDTO penalty = new AdminUserPenaltyDTO();
                 penalty.setPenaltyUid(rs.getLong("penalty_uid"));
@@ -44,33 +44,33 @@ public class AdminUserPenaltyDAO {
                 penalty.setUserUid(rs.getLong("user_uid"));
                 penalty.setUsername(rs.getString("username"));
                 penalty.setAdminUid(rs.getLong("admin_uid"));
-                
+
                 penaltyList.add(penalty);
             }
         } finally {
             DBConnectionUtil.close(rs, pstmt, conn);
         }
-        
+
         return penaltyList;
     }
-    
+
     /**
      * 특정 사용자의 패널티 목록 조회
      */
     public List<AdminUserPenaltyDTO> getUserPenaltyByUserId(long userUid) throws SQLException {
         List<AdminUserPenaltyDTO> penaltyList = new ArrayList<>();
-        
+
         try {
             conn = DBConnectionUtil.getConnection();
             String sql = "SELECT p.*, u.user_name as username " +
-                         "FROM penalty p " +
-                         "JOIN user u ON p.user_uid = u.user_uid " +
-                         "WHERE p.user_uid = ? " +
-                         "ORDER BY p.penalty_start_date DESC";
+                    "FROM penalty p " +
+                    "JOIN user u ON p.user_uid = u.user_uid " +
+                    "WHERE p.user_uid = ? " +
+                    "ORDER BY p.penalty_start_date DESC";
             pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, userUid);
             rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 AdminUserPenaltyDTO penalty = new AdminUserPenaltyDTO();
                 penalty.setPenaltyUid(rs.getLong("penalty_uid"));
@@ -82,16 +82,16 @@ public class AdminUserPenaltyDAO {
                 penalty.setUserUid(rs.getLong("user_uid"));
                 penalty.setUsername(rs.getString("username"));
                 penalty.setAdminUid(rs.getLong("admin_uid"));
-                
+
                 penaltyList.add(penalty);
             }
         } finally {
             DBConnectionUtil.close(rs, pstmt, conn);
         }
-        
+
         return penaltyList;
     }
-    
+
     /**
      * 패널티 추가
      */
@@ -99,8 +99,8 @@ public class AdminUserPenaltyDAO {
         try {
             conn = DBConnectionUtil.getConnection();
             String sql = "INSERT INTO penalty (penalty_reason, penalty_start_date, penalty_end_date, " +
-                         "penalty_status, penalty_duration, user_uid, admin_uid) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    "penalty_status, penalty_duration, user_uid, admin_uid) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, penalty.getPenaltyReason());
             pstmt.setDate(2, penalty.getPenaltyStartDate());
@@ -109,13 +109,13 @@ public class AdminUserPenaltyDAO {
             pstmt.setString(5, penalty.getPenaltyDuration());
             pstmt.setLong(6, penalty.getUserUid());
             pstmt.setLong(7, penalty.getAdminUid());
-            
+
             return pstmt.executeUpdate() > 0;
         } finally {
             DBConnectionUtil.close(null, pstmt, conn);
         }
     }
-    
+
     /**
      * 패널티 상태 변경
      */
@@ -126,7 +126,7 @@ public class AdminUserPenaltyDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, newStatus);
             pstmt.setLong(2, penaltyUid);
-            
+
             return pstmt.executeUpdate() > 0;
         } finally {
             DBConnectionUtil.close(null, pstmt, conn);

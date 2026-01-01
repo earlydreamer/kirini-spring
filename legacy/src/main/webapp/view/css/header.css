@@ -126,6 +126,7 @@ nav a::after {
     transition: opacity 0.3s;
     display: none !important; /* 기본적으로 숨김 처리 강화 */
 }
+
 .hidden-until-load.loaded {
     opacity: 1;
     display: inline !important; /* 로드 완료 시에만 표시 */
@@ -162,22 +163,22 @@ body.signup-page .guest-only {
     header {
         padding: 0;
     }
-    
+
     .header-top-row, .header-bottom-row {
         flex-direction: column;
         padding: 0.8rem 1rem;
     }
-    
+
     .top-nav, .bottom-nav {
         margin-top: 0.8rem;
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     nav a {
         margin: 0.5rem;
     }
-    
+
     .logo {
         margin-bottom: 0.5rem;
     }

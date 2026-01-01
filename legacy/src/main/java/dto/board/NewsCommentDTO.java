@@ -84,7 +84,7 @@ public class NewsCommentDTO {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    
+
     public long getParentId() {
         return parentId;
     }
@@ -95,9 +95,9 @@ public class NewsCommentDTO {
 
     @Override
     public String toString() {
-        return "NewsCommentDTO [newsCommentId=" + newsCommentId + ", newsCommentContents=" 
-                + newsCommentContents + ", newsCommentWritetime=" + newsCommentWritetime 
-                + ", userId=" + userId + ", userName=" + userName 
+        return "NewsCommentDTO [newsCommentId=" + newsCommentId + ", newsCommentContents="
+                + newsCommentContents + ", newsCommentWritetime=" + newsCommentWritetime
+                + ", userId=" + userId + ", userName=" + userName
                 + ", parentId=" + parentId + "]";
     }
 }
