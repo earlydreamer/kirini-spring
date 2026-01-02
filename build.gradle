@@ -42,6 +42,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
+    // BCrypt 비밀번호 암호화를 위한 Spring Security Crypto
+    implementation 'org.springframework.security:spring-security-crypto'
+
     // .env 파일 로드를 위한 라이브러리
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
