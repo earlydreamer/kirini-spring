@@ -35,7 +35,7 @@ public class FreeboardComment {
     private Freeboard freeboard;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_uid", nullable = false)
+    @JoinColumn(name = "account_uid", nullable = false)
     private User user;
 }
 

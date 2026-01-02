@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "freeboard",
         indexes = {
                 @Index(name = "idx_freeboard_uid", columnList = "freeboard_uid"),
-                @Index(name = "idx_user_uid", columnList = "user_uid"),
+                @Index(name = "idx_account_uid", columnList = "account_uid"),
                 @Index(name = "idx_freeboard_notify", columnList = "freeboard_notify"),
                 @Index(name = "idx_freeboard_deleted", columnList = "freeboard_deleted")
         })
@@ -56,7 +56,7 @@ public class Freeboard {
     private DeleteStatus deleteStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_uid", nullable = false)
+    @JoinColumn(name = "account_uid", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "freeboard", cascade = CascadeType.ALL, orphanRemoval = true)

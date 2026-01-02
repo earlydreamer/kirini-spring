@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_penalty")
+@Table(name = "account_penalty")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPenalty {
@@ -36,7 +36,7 @@ public class UserPenalty {
     private PenaltyDuration duration;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_uid", nullable = false)
+    @JoinColumn(name = "account_uid", nullable = false)
     private User user;
 
     public enum PenaltyStatus {

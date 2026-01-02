@@ -22,7 +22,7 @@ public class Scrap {
     private LocalDateTime scrapDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scrap_user_uid")
+    @JoinColumn(name = "scrap_account_uid")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
