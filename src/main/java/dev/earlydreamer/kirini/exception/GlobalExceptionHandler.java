@@ -3,6 +3,8 @@ package dev.earlydreamer.kirini.exception;
 import dev.earlydreamer.kirini.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,10 +20,30 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if ("UNAUTHORIZED".equalsIgnoreCase(e.getErrorCode())) {
+            status = HttpStatus.UNAUTHORIZED;
+        } else if ("FORBIDDEN".equalsIgnoreCase(e.getErrorCode())) {
+            status = HttpStatus.FORBIDDEN;
+        }
         return ResponseEntity
-                .badRequest()
+                .status(status)
                 .body(ApiResponse.error(e.getMessage(), e.getErrorCode()))
                 ;
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthException(AuthenticationException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("인증이 필요합니다.", "UNAUTHORIZED"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("권한이 없습니다.", "FORBIDDEN"));
     }
 
     /**

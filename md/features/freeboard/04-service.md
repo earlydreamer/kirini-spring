@@ -19,10 +19,13 @@
 - `BusinessException` 사용: NOT_FOUND, FORBIDDEN, TITLE_REQUIRED, CONTENTS_REQUIRED 등 코드 부여
 - 권한 체크: 작성자 동일 or Authority ADMIN/ARMBAND
 
+## 변경 사항 (JWT 인증 반영)
+- 서비스 메서드 accountId/authority는 인증 컨텍스트에서 주입됨(Authentication → JwtUser)
+- 권한 체크 로직 동일(작성자 또는 ADMIN/ARMBAND)
+
 ## 스니펫
 ```java
 if (!canModify(freeboard, accountId, authority)) {
     throw new BusinessException("수정 권한이 없습니다.", "FORBIDDEN");
 }
 ```
-

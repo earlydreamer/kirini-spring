@@ -27,6 +27,7 @@ public class FreeboardService {
 
     @Transactional
     public FreeboardResponse create(Integer accountId, FreeboardCreateRequest request, String authorIp) {
+        // accountId는 인증에서 가져온 값
         if (request.getTitle() == null || request.getTitle().isBlank()) {
             throw new BusinessException("제목은 필수입니다.", "TITLE_REQUIRED");
         }
@@ -72,6 +73,7 @@ public class FreeboardService {
 
     @Transactional
     public FreeboardResponse update(Integer id, Integer accountId, FreeboardUpdateRequest request, User.Authority authority) {
+        // accountId/authority는 인증에서 가져온 값
         Freeboard freeboard = freeboardRepository.findByIdAndDeleteStatus(id, DeleteStatus.MAINTAINED)
                 .orElseThrow(() -> new BusinessException("게시글을 찾을 수 없습니다.", "NOT_FOUND"));
 
@@ -95,6 +97,7 @@ public class FreeboardService {
 
     @Transactional
     public void delete(Integer id, Integer accountId, User.Authority authority) {
+        // accountId/authority는 인증에서 가져온 값
         Freeboard freeboard = freeboardRepository.findByIdAndDeleteStatus(id, DeleteStatus.MAINTAINED)
                 .orElseThrow(() -> new BusinessException("게시글을 찾을 수 없습니다.", "NOT_FOUND"));
 

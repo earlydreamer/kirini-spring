@@ -6,6 +6,8 @@ import dev.earlydreamer.kirini.domain.User;
 import dev.earlydreamer.kirini.dto.request.FreeboardCreateRequest;
 import dev.earlydreamer.kirini.dto.request.FreeboardUpdateRequest;
 import dev.earlydreamer.kirini.dto.response.FreeboardResponse;
+import dev.earlydreamer.kirini.exception.GlobalExceptionHandler;
+import dev.earlydreamer.kirini.security.JwtUser;
 import dev.earlydreamer.kirini.service.FreeboardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +18,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,7 +48,15 @@ class FreeboardControllerTest {
     @BeforeEach
     void setup() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(freeboardController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(freeboardController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+    }
+
+    private Authentication auth(Integer accountId, User.Authority authority) {
+        JwtUser jwtUser = new JwtUser(accountId, authority);
+        return new UsernamePasswordAuthenticationToken(jwtUser, null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + authority.name())));
     }
 
     private FreeboardResponse sampleResponse(Integer id) {
@@ -78,7 +93,7 @@ class FreeboardControllerTest {
         String body = objectMapper.writeValueAsString(createReq);
 
         mockMvc.perform(post("/api/freeboard")
-                        .header("X-Account-Id", 1)
+                        .principal(auth(1, User.Authority.NORMAL))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
@@ -90,7 +105,7 @@ class FreeboardControllerTest {
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.readCount").value(1));
 
-        mockMvc.perform(delete("/api/freeboard/1").header("X-Account-Id", 1))
+        mockMvc.perform(delete("/api/freeboard/1").principal(auth(1, User.Authority.NORMAL)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
     }
@@ -132,16 +147,59 @@ class FreeboardControllerTest {
         String updateBody = objectMapper.writeValueAsString(updateReq);
 
         mockMvc.perform(post("/api/freeboard")
-                        .header("X-Account-Id", 1)
+                        .principal(auth(1, User.Authority.NORMAL))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk());
 
         mockMvc.perform(put("/api/freeboard/1")
-                        .header("X-Account-Id", 1)
+                        .principal(auth(1, User.Authority.NORMAL))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.title").value("new title"));
+    }
+
+    @Test
+    @DisplayName("비인증 사용자는 작성 불가")
+    void createRequiresAuth() throws Exception {
+        FreeboardCreateRequest createReq = new FreeboardCreateRequest();
+        var titleField = FreeboardCreateRequest.class.getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(createReq, "hello");
+        var contentsField = FreeboardCreateRequest.class.getDeclaredField("contents");
+        contentsField.setAccessible(true);
+        contentsField.set(createReq, "world");
+
+        String body = objectMapper.writeValueAsString(createReq);
+
+        mockMvc.perform(post("/api/freeboard")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("권한 부족 시 수정 불가")
+    @WithMockUser(username = "2", roles = {"NORMAL"})
+    void updateForbidden() throws Exception {
+        // given existing post owner id = 1, but user=2 tries to edit
+        var updateReq = new FreeboardUpdateRequest();
+        var uTitle = FreeboardUpdateRequest.class.getDeclaredField("title");
+        uTitle.setAccessible(true);
+        uTitle.set(updateReq, "new title");
+
+        Mockito.when(freeboardService.update(eq(1), eq(2), any(FreeboardUpdateRequest.class), any()))
+                .thenThrow(new dev.earlydreamer.kirini.exception.BusinessException("삭제 권한이 없습니다.", "FORBIDDEN"));
+
+        String updateBody = objectMapper.writeValueAsString(updateReq);
+
+        mockMvc.perform(put("/api/freeboard/1")
+                        .principal(auth(2, User.Authority.NORMAL))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBody))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("FORBIDDEN"));
     }
 }

@@ -29,7 +29,7 @@ public class FreeboardController {
             @RequestHeader(name = "X-Real-IP", required = false) String realIp,
             @RequestHeader(name = "Remote-Addr", required = false) String remoteAddr
     ) {
-        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        JwtUser jwtUser = requireJwtUser(authentication);
         String ip = pickClientIp(forwardedFor, realIp, remoteAddr);
         FreeboardResponse response = freeboardService.create(jwtUser.accountId(), request, ip);
         return ResponseEntity.ok(ApiResponse.success("게시글이 등록되었습니다.", response));
@@ -56,7 +56,7 @@ public class FreeboardController {
             Authentication authentication,
             @Valid @RequestBody FreeboardUpdateRequest request
     ) {
-        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        JwtUser jwtUser = requireJwtUser(authentication);
         FreeboardResponse response = freeboardService.update(id, jwtUser.accountId(), request, jwtUser.authority());
         return ResponseEntity.ok(ApiResponse.success("게시글이 수정되었습니다.", response));
     }
@@ -66,7 +66,7 @@ public class FreeboardController {
             @PathVariable Integer id,
             Authentication authentication
     ) {
-        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        JwtUser jwtUser = requireJwtUser(authentication);
         freeboardService.delete(id, jwtUser.accountId(), jwtUser.authority());
         return ResponseEntity.ok(ApiResponse.success("게시글이 삭제되었습니다."));
     }
@@ -81,5 +81,12 @@ public class FreeboardController {
             return realIp.trim();
         }
         return remoteAddr;
+    }
+
+    private JwtUser requireJwtUser(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null || !(authentication.getPrincipal() instanceof JwtUser jwtUser)) {
+            throw new dev.earlydreamer.kirini.exception.BusinessException("인증이 필요합니다.", "UNAUTHORIZED");
+        }
+        return jwtUser;
     }
 }
