@@ -20,7 +20,7 @@
 - SecurityConfig 추가: Stateless, JWT 필터 등록, /api/freeboard 읽기 공개, 쓰기 인증 필요
 - JWT 구성요소: JwtProvider(발급/파싱), JwtAuthenticationFilter(Authorization 헤더 처리), JwtUser(인증 principal)
 - 컨트롤러: Authentication에서 accountId/authority 주입, 임시 헤더 제거
-- 문서/정책: 04/05/06 문서에 JWT 반영 내용 추가
+- 문서/정책: 04/05/06 문서에 JWT 반영 내용 추가 + 07-auth.md 작성
 
 ## 다음 읽을 거리
 - 상세 단계별 구현은 위 링크된 문서를 참고하세요.
