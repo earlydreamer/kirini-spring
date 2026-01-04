@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ import java.util.List;
                 @Index(name = "idx_freeboard_deleted", columnList = "freeboard_deleted")
         })
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Freeboard {
 
     @Id
@@ -73,4 +75,3 @@ public class Freeboard {
         MAINTAINED, DELETED
     }
 }
-

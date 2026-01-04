@@ -295,3 +295,13 @@ md/
   - Legacy ERD: `legacy/docker-settings/classes/kirini-ERD-1.sql`
   - 신규 MySQL 스키마: `src/main/resources/schema-mysql.sql`
 - 트러블슈팅 기록: `md/troubleshooting.md`
+
+---
+
+## 13. 테스트 및 문서화 정책
+
+- 테스트 작성 원칙:
+  - 단위 테스트 우선: 컨트롤러는 `MockMvcBuilders.standaloneSetup` + Mockito stub 형태를 허용하여 스프링 컨텍스트 의존을 최소화
+  - 통합 테스트는 필요 시 `@SpringBootTest`로 별도 작성하며, 실제 DB/보안 설정을 적용한 시나리오를 추가
+  - 테스트 명세는 기능 문서의 Test 단계(`..../06-test.md`)에 상태 및 실행 커맨드(`./gradlew.bat test --no-build-cache --warning-mode=all`)를 기록
+- 응답 포맷: `ApiResponse(success/message/data/errorCode)` 일관 유지, 예외는 `GlobalExceptionHandler`에서 매핑

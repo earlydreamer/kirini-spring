@@ -1,0 +1,147 @@
+package dev.earlydreamer.kirini.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.earlydreamer.kirini.domain.Freeboard;
+import dev.earlydreamer.kirini.domain.User;
+import dev.earlydreamer.kirini.dto.request.FreeboardCreateRequest;
+import dev.earlydreamer.kirini.dto.request.FreeboardUpdateRequest;
+import dev.earlydreamer.kirini.dto.response.FreeboardResponse;
+import dev.earlydreamer.kirini.service.FreeboardService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+class FreeboardControllerTest {
+
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private FreeboardService freeboardService;
+
+    @InjectMocks
+    private FreeboardController freeboardController;
+
+    @BeforeEach
+    void setup() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(freeboardController).build();
+    }
+
+    private FreeboardResponse sampleResponse(Integer id) {
+        return FreeboardResponse.builder()
+                .id(id)
+                .title("title")
+                .contents("content")
+                .readCount(1)
+                .recommendCount(0)
+                .writeTime(LocalDateTime.now())
+                .modifyTime(LocalDateTime.now())
+                .notifyType(Freeboard.NotifyType.COMMON)
+                .deleteStatus(Freeboard.DeleteStatus.MAINTAINED)
+                .accountId(1)
+                .build();
+    }
+
+    @Test
+    @DisplayName("게시글 생성 후 단건 조회 및 삭제")
+    void createReadDelete() throws Exception {
+        var createReq = new FreeboardCreateRequest();
+        var titleField = FreeboardCreateRequest.class.getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(createReq, "hello");
+        var contentsField = FreeboardCreateRequest.class.getDeclaredField("contents");
+        contentsField.setAccessible(true);
+        contentsField.set(createReq, "world");
+
+        Mockito.when(freeboardService.create(eq(1), any(FreeboardCreateRequest.class), any()))
+                .thenReturn(sampleResponse(1));
+        Mockito.when(freeboardService.getWithIncreaseReadCount(1)).thenReturn(sampleResponse(1));
+        Mockito.doNothing().when(freeboardService).delete(eq(1), eq(1), any(User.Authority.class));
+
+        String body = objectMapper.writeValueAsString(createReq);
+
+        mockMvc.perform(post("/api/freeboard")
+                        .header("X-Account-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(1));
+
+        mockMvc.perform(get("/api/freeboard/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.readCount").value(1));
+
+        mockMvc.perform(delete("/api/freeboard/1").header("X-Account-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("게시글 수정")
+    void updatePost() throws Exception {
+        var createReq = new FreeboardCreateRequest();
+        var titleField = FreeboardCreateRequest.class.getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(createReq, "title");
+        var contentsField = FreeboardCreateRequest.class.getDeclaredField("contents");
+        contentsField.setAccessible(true);
+        contentsField.set(createReq, "content");
+
+        var updateReq = new FreeboardUpdateRequest();
+        var uTitle = FreeboardUpdateRequest.class.getDeclaredField("title");
+        uTitle.setAccessible(true);
+        uTitle.set(updateReq, "new title");
+
+        Mockito.when(freeboardService.create(eq(1), any(FreeboardCreateRequest.class), any()))
+                .thenReturn(sampleResponse(1));
+        var updated = FreeboardResponse.builder()
+                .id(1)
+                .title("new title")
+                .contents("content")
+                .readCount(1)
+                .recommendCount(0)
+                .writeTime(LocalDateTime.now())
+                .modifyTime(LocalDateTime.now())
+                .notifyType(Freeboard.NotifyType.COMMON)
+                .deleteStatus(Freeboard.DeleteStatus.MAINTAINED)
+                .accountId(1)
+                .build();
+        Mockito.when(freeboardService.update(eq(1), eq(1), any(FreeboardUpdateRequest.class), any()))
+                .thenReturn(updated);
+
+        String body = objectMapper.writeValueAsString(createReq);
+        String updateBody = objectMapper.writeValueAsString(updateReq);
+
+        mockMvc.perform(post("/api/freeboard")
+                        .header("X-Account-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(put("/api/freeboard/1")
+                        .header("X-Account-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.title").value("new title"));
+    }
+}

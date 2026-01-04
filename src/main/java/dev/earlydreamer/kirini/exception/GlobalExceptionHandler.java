@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.error(e.getMessage(), e.getErrorCode()));
+                .body(ApiResponse.error(e.getMessage(), e.getErrorCode()))
+                ;
     }
 
     /**
@@ -35,7 +36,8 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.error(message, "VALIDATION_ERROR"));
+                .body(ApiResponse.error(message, "VALIDATION_ERROR"))
+                ;
     }
 
     /**
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("서버 오류가 발생했습니다.", "INTERNAL_ERROR"));
+                .body(ApiResponse.error("서버 오류가 발생했습니다.", "INTERNAL_ERROR"))
+                ;
     }
 }
-
