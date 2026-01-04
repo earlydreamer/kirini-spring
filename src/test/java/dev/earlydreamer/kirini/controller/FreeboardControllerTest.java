@@ -50,6 +50,7 @@ class FreeboardControllerTest {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(freeboardController)
                 .setControllerAdvice(new GlobalExceptionHandler())
+                .defaultRequest(get("/").principal(auth(1, User.Authority.NORMAL)))
                 .build();
     }
 
@@ -174,6 +175,7 @@ class FreeboardControllerTest {
         String body = objectMapper.writeValueAsString(createReq);
 
         mockMvc.perform(post("/api/freeboard")
+                        .with(request -> { request.setUserPrincipal(null); return request; })
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isUnauthorized());
