@@ -300,6 +300,8 @@ md/
 
 ## 13. 테스트 및 문서화 정책
 
+- 커밋 정책: 작업 단계별로 의미 단위 커밋을 남긴다 (예: DTO/Repository/Service/Controller/Test/문서별 단계적 커밋).
+- 기능별 문서: `md/features/{기능명}/` 아래에 단계별 문서(overview/plan/DTO/Repository/Service/Controller/Test 등)를 작성하며 **한국어**로 유지
 - 테스트 작성 원칙:
   - 단위 테스트 우선: 컨트롤러는 `MockMvcBuilders.standaloneSetup` + Mockito stub 형태를 허용하여 스프링 컨텍스트 의존을 최소화
   - 통합 테스트는 필요 시 `@SpringBootTest`로 별도 작성하며, 실제 DB/보안 설정을 적용한 시나리오를 추가
