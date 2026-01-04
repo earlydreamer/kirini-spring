@@ -47,5 +47,8 @@ public class JwtProvider {
         String auth = claims.get("auth", String.class);
         return new JwtUser(accountId, User.Authority.valueOf(auth));
     }
-}
 
+    public long getExpirationMs() {
+        return expirationMs;
+    }
+}
