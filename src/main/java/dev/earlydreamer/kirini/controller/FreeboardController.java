@@ -6,10 +6,12 @@ import dev.earlydreamer.kirini.dto.request.FreeboardUpdateRequest;
 import dev.earlydreamer.kirini.dto.response.ApiResponse;
 import dev.earlydreamer.kirini.dto.response.FreeboardListResponse;
 import dev.earlydreamer.kirini.dto.response.FreeboardResponse;
+import dev.earlydreamer.kirini.security.JwtUser;
 import dev.earlydreamer.kirini.service.FreeboardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,19 +21,17 @@ public class FreeboardController {
 
     private final FreeboardService freeboardService;
 
-    // TODO: 인증 연동 시 accountId/authority는 SecurityContext에서 추출
-
     @PostMapping
     public ResponseEntity<ApiResponse<FreeboardResponse>> create(
-            @RequestHeader(name = "X-Account-Id") Integer accountId,
-            @RequestHeader(name = "X-Account-Authority", required = false) User.Authority authority,
+            Authentication authentication,
             @Valid @RequestBody FreeboardCreateRequest request,
             @RequestHeader(name = "X-Forwarded-For", required = false) String forwardedFor,
             @RequestHeader(name = "X-Real-IP", required = false) String realIp,
             @RequestHeader(name = "Remote-Addr", required = false) String remoteAddr
     ) {
+        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         String ip = pickClientIp(forwardedFor, realIp, remoteAddr);
-        FreeboardResponse response = freeboardService.create(accountId, request, ip);
+        FreeboardResponse response = freeboardService.create(jwtUser.accountId(), request, ip);
         return ResponseEntity.ok(ApiResponse.success("게시글이 등록되었습니다.", response));
     }
 
@@ -53,21 +53,21 @@ public class FreeboardController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<FreeboardResponse>> update(
             @PathVariable Integer id,
-            @RequestHeader(name = "X-Account-Id") Integer accountId,
-            @RequestHeader(name = "X-Account-Authority", required = false) User.Authority authority,
+            Authentication authentication,
             @Valid @RequestBody FreeboardUpdateRequest request
     ) {
-        FreeboardResponse response = freeboardService.update(id, accountId, request, authority != null ? authority : User.Authority.NORMAL);
+        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        FreeboardResponse response = freeboardService.update(id, jwtUser.accountId(), request, jwtUser.authority());
         return ResponseEntity.ok(ApiResponse.success("게시글이 수정되었습니다.", response));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable Integer id,
-            @RequestHeader(name = "X-Account-Id") Integer accountId,
-            @RequestHeader(name = "X-Account-Authority", required = false) User.Authority authority
+            Authentication authentication
     ) {
-        freeboardService.delete(id, accountId, authority != null ? authority : User.Authority.NORMAL);
+        JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
+        freeboardService.delete(id, jwtUser.accountId(), jwtUser.authority());
         return ResponseEntity.ok(ApiResponse.success("게시글이 삭제되었습니다."));
     }
 
@@ -83,4 +83,3 @@ public class FreeboardController {
         return remoteAddr;
     }
 }
-

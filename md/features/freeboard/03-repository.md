@@ -15,4 +15,4 @@
 
 ## 비고
 - 삭제 플래그 Enum: `MAINTAINED`만 조회 대상으로 사용
-
+- JWT 적용 후에도 Repository 로직 변경 없음
