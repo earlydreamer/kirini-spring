@@ -24,13 +24,15 @@
    - 단위: 인증 누락/권한 부족 MockMvc 테스트 추가
    - 통합: @SpringBootTest + JWT 발급 헬퍼로 CRUD 시나리오
 
-## 엔드포인트 초안
-- `POST /api/auth/login`
+## 엔드포인트 초안 → 구현 상태
+- `POST /api/auth/login` (구현됨)
   - 요청: `{ "email": "...", "password": "..." }`
   - 응답: `{ success, data: { accessToken, expiresIn } }`
-- `POST /api/auth/refresh` (미구현)
+- `POST /api/auth/refresh` (구현됨: 단순 재발급)
+  - 요청: `{ "token": "..." }`
+  - 응답: 새 accessToken, expiresIn
 
 ## 상태
-- 로그인 엔드포인트 구현: `AuthController#login`
+- 로그인/재발급 엔드포인트 구현: `AuthController#login`, `AuthController#refresh`
 - SecurityConfig: `/api/auth/**` permitAll, stateless, JWT 필터
 - UserDetailsService: `CustomUserDetailsService` + `SecurityUser`

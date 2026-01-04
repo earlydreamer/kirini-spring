@@ -48,6 +48,11 @@ public class JwtProvider {
         return new JwtUser(accountId, User.Authority.valueOf(auth));
     }
 
+    public String refresh(String token) {
+        JwtUser jwtUser = parseToken(token);
+        return generateToken(jwtUser.accountId(), jwtUser.authority());
+    }
+
     public long getExpirationMs() {
         return expirationMs;
     }
