@@ -301,9 +301,9 @@ md/
 ## 13. 테스트 및 문서화 정책
 
 - 커밋 정책: 작업 단계별로 의미 단위 커밋을 남긴다 (예: DTO/Repository/Service/Controller/Test/문서별 단계적 커밋).
-- 기능별 문서: `md/features/{기능명}/` 아래에 단계별 문서(overview/plan/DTO/Repository/Service/Controller/Test 등)를 작성하며 **한국어**로 유지
+- 기능별 문서: `md/features/{기능명}/` 아래에 단계별 문서(overview/plan/DTO/Repository/Service/Controller/Test 등)를 작성하며 **한국어**로 유지. 인증/인가는 `md/features/auth/`에 별도 관리.
 - 테스트 작성 원칙:
   - 단위 테스트 우선: 컨트롤러는 `MockMvcBuilders.standaloneSetup` + Mockito stub 형태를 허용하여 스프링 컨텍스트 의존을 최소화
   - 통합 테스트는 필요 시 `@SpringBootTest`로 별도 작성하며, 실제 DB/보안 설정을 적용한 시나리오를 추가
-  - 테스트 명세는 기능 문서의 Test 단계(`..../06-test.md`)에 상태 및 실행 커맨드(`./gradlew.bat test --no-build-cache --warning-mode=all`)를 기록
+  - 테스트 명세는 기능 문서의 Test 단계(`..../06-test.md` 등) 또는 인증 문서(`auth/..`)에 상태와 실행 커맨드(`./gradlew.bat test --no-build-cache --warning-mode=all`)를 기록
 - 응답 포맷: `ApiResponse(success/message/data/errorCode)` 일관 유지, 예외는 `GlobalExceptionHandler`에서 매핑
